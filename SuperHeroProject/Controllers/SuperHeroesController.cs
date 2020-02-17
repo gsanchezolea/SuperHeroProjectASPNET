@@ -4,15 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SuperHeroProject.Data;
+using SuperHeroProject.Models;
 
 namespace SuperHeroProject.Controllers
 {
+   
     public class SuperHeroesController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public SuperHeroesController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+      
         // GET: SuperHeroes
         public ActionResult Index()
         {
-            return View();
+            List<Models.SuperHero> SuperHeroList =_context.SuperHeroes.ToList();
+            return View(SuperHeroList);
         }
 
         // GET: SuperHeroes/Details/5
@@ -24,24 +35,22 @@ namespace SuperHeroProject.Controllers
         // GET: SuperHeroes/Create
         public ActionResult Create()
         {
+            ViewBag.SuperHero = new SuperHero ("Name", "AlterEgo", "PrimaryAbility", "SecondaryHeroProperty", "CatchPhrase");
             return View();
         }
 
         // POST: SuperHeroes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(SuperHero superHero)
         {
-            try
+         if(ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                _context.SuperHeroes.Add(superHero);
+                _context.SaveChanges();                
+            }
+            return Index();
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         // GET: SuperHeroes/Edit/5
