@@ -9,7 +9,7 @@ using SuperHeroProject.Models;
 
 namespace SuperHeroProject.Controllers
 {
-   
+
     public class SuperHeroesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -18,11 +18,11 @@ namespace SuperHeroProject.Controllers
         {
             _context = context;
         }
-      
+
         // GET: SuperHeroes
         public ActionResult Index()
         {
-            List<Models.SuperHero> SuperHeroList =_context.SuperHeroes.ToList();
+            List<Models.SuperHero> SuperHeroList = _context.SuperHeroes.ToList();
             return View(SuperHeroList);
         }
 
@@ -45,7 +45,7 @@ namespace SuperHeroProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(SuperHero newSuperHero)
         {
-         if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _context.SuperHeroes.Add(newSuperHero);
                 _context.SaveChanges();
@@ -58,47 +58,50 @@ namespace SuperHeroProject.Controllers
         // GET: SuperHeroes/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            SuperHero superHeroToEdit = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+            return View(superHeroToEdit);
         }
 
         // POST: SuperHeroes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(SuperHero superHeroWithEdits)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                SuperHero dbSuperHero = _context.SuperHeroes.Where(s => s.Id == superHeroWithEdits.Id).SingleOrDefault();
+                dbSuperHero.Name = superHeroWithEdits.Name;
+                dbSuperHero.AlterEgo = superHeroWithEdits.AlterEgo;
+                dbSuperHero.PrimaryAbility = superHeroWithEdits.PrimaryAbility;
+                dbSuperHero.SecondaryAbility = superHeroWithEdits.SecondaryAbility;
+                dbSuperHero.CatchPhrase = dbSuperHero.CatchPhrase;
+                
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: SuperHeroes/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            SuperHero superHeroToDelete = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+            return View(superHeroToDelete);
         }
 
         // POST: SuperHeroes/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(SuperHero superHeroToDelete)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                SuperHero dbSuperHero = _context.SuperHeroes.Where(s => s.Id == superHeroToDelete.Id).SingleOrDefault();
+                _context.SuperHeroes.Remove(dbSuperHero);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
     }
 }
