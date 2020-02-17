@@ -29,27 +29,29 @@ namespace SuperHeroProject.Controllers
         // GET: SuperHeroes/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            SuperHero superHeroDetails = _context.SuperHeroes.Where(s => s.Id == id).SingleOrDefault();
+            return View(superHeroDetails);
         }
 
         // GET: SuperHeroes/Create
         public ActionResult Create()
         {
-            ViewBag.SuperHero = new SuperHero ("Name", "AlterEgo", "PrimaryAbility", "SecondaryHeroProperty", "CatchPhrase");
-            return View();
+            SuperHero newSuperHero = new SuperHero();
+            return View(newSuperHero);
         }
 
         // POST: SuperHeroes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SuperHero superHero)
+        public ActionResult Create(SuperHero newSuperHero)
         {
          if(ModelState.IsValid)
             {
-                _context.SuperHeroes.Add(superHero);
-                _context.SaveChanges();                
+                _context.SuperHeroes.Add(newSuperHero);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            return Index();
+            return View();
 
         }
 

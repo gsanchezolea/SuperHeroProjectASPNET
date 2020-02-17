@@ -16,5 +16,7 @@ namespace SuperHeroProject.Models
         public string SecondaryHeroProperty { get; set; }
         public string  CatchPhrase { get; set; }
 
+       
+
     }
 }
